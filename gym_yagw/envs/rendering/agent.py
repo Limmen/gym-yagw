@@ -7,7 +7,8 @@ class Agent(pyglet.sprite.Sprite):
     Subclasses pyglet.sprite.Sprite to be able to override draw() and update() methods
     and define state of the sprite
     """
-    def __init__(self, avatar_path, col, row, rect_size, num_cols, num_rows, goal_state_y, goal_state_x, scale=0.25):
+    def __init__(self, avatar_path, col, row, rect_size, num_cols, num_rows, goal_state_y, goal_state_x, batch,
+                 group, scale=0.25):
         """
         Class constructor, initializes the agent
 
@@ -20,6 +21,8 @@ class Agent(pyglet.sprite.Sprite):
         :param num_rows: the maximum row in the grid
         :param goal_state_x: the column of the goal state
         :param goal_state_y: the row of the goal state
+        :param batch: the batch to add this element to
+        :param group: the batch group to add this element to (e.g. foreground or background)
         """
         self.avatar = pyglet.resource.image(avatar_path)
         self.rect_size = rect_size
@@ -27,12 +30,13 @@ class Agent(pyglet.sprite.Sprite):
         self.initial_row = row
         self.max_row = num_rows
         self.max_col = num_cols
-        super(Agent, self).__init__(self.avatar)
+        super(Agent, self).__init__(self.avatar, batch=batch, group=group)
         self.reset()
         self.__center_avatar()
         self.scale = scale
         self.goal_state_y = goal_state_y
         self.goal_state_x = goal_state_x
+        self.batch = batch
 
     def __center_avatar(self):
         """

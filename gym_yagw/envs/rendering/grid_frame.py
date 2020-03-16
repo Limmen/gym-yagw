@@ -2,7 +2,7 @@ import pyglet
 from gym_yagw.envs.rendering.grid import Grid
 from gym_yagw.envs.rendering.agent import Agent
 from gym_yagw.envs.rendering import constants
-from gym_yagw.envs.rendering.render_util import draw_and_fill_rect, draw_label
+from gym_yagw.envs.rendering.render_util import batch_label, batch_rect_fill
 
 class GridFrame(pyglet.window.Window):
     """
@@ -51,12 +51,59 @@ class GridFrame(pyglet.window.Window):
         self.resources_dir = resources_dir
         self.setup_resources_path()
         self.manual = manual
+        self.avatar_filename = avatar_filename
+        self.agent_scale = agent_scale
+        self.create_batch(agent_start_y, agent_start_x)
+
+    def create_batch(self, agent_start_y, agent_start_x):
+        """
+        Creates a batch of elements to render. By grouping elements in a batch we can utilize OpenGL batch rendering
+        and reduce the cpu <–> gpu data transfers and the number of draw-calls.
+
+        :param agent_start_x: the agent starting position (column index)
+        :param agent_start_y: the agent starting position (row index)
+        :return: None
+        """
+        self.batch = pyglet.graphics.Batch()
+        self.background = pyglet.graphics.OrderedGroup(0)
+        self.foreground = pyglet.graphics.OrderedGroup(1)
+
+        # ---- Background ----
+
+        # Sets the background color
+        batch_rect_fill(0, 0, self.width, self.height, self.bg_color, self.batch, self.background)
+
+        # Grid
+        for i in range(self.grid.num_rows):
+            for j in range(self.grid.num_cols):
+                self.grid.grid[i][j].draw(i, j, self.border_color, self.batch, self.background)
+
+        # ---- Foreground ----
+
+        # Agent
         if agent_start_y is not None and agent_start_x is not None:
-            x,y = agent_start_x, agent_start_y
+            x, y = agent_start_x, agent_start_y
         else:
-            x,y = 0, self.num_rows
-        self.agent = Agent(avatar_filename, x,y, self.rect_size, self.num_cols, self.num_rows,
-                           self.goal_state_y, self.goal_state_x, scale=agent_scale)
+            x, y = 0, self.num_rows
+        self.agent = Agent(self.avatar_filename, x, y, self.rect_size, self.num_cols, self.num_rows,
+                           self.goal_state_y, self.goal_state_x, self.batch, self.foreground, scale=self.agent_scale)
+
+        # Panel Labels
+        batch_label("R: ", constants.GRIDWORLD.PANEL_LEFT_MARGIN, self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN,
+                    constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA, self.batch,
+                    self.foreground)
+        batch_label("t: ", constants.GRIDWORLD.PANEL_LEFT_MARGIN,
+                    self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN * 2,
+                    constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA,
+                    self.batch, self.foreground)
+        self.reward_label = batch_label(str(self.agent.reward), constants.GRIDWORLD.PANEL_LEFT_MARGIN * 2,
+                    self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN,
+                    constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA, self.batch,
+                    self.foreground)
+        self.step_label = batch_label(str(self.agent.step), constants.GRIDWORLD.PANEL_LEFT_MARGIN * 2,
+                    self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN * 2,
+                    constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA, self.batch,
+                    self.foreground)
 
     def setup_resources_path(self):
         """
@@ -76,32 +123,13 @@ class GridFrame(pyglet.window.Window):
 
         :return: None
         """
-
         # Clear the window
         self.clear()
+        # Draw batch with the frame contents
+        self.batch.draw()
+        # Make this window the current OpenGL rendering context
+        self.switch_to()
 
-
-        # Sets the background
-        draw_and_fill_rect(0, 0, self.width, self.height, self.bg_color)
-
-        # Draw the panel labels
-        draw_label("R: ", constants.GRIDWORLD.PANEL_LEFT_MARGIN, self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN,
-                   constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA)
-        draw_label("t: ", constants.GRIDWORLD.PANEL_LEFT_MARGIN, self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN * 2,
-                   constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA)
-        draw_label(str(self.agent.reward), constants.GRIDWORLD.PANEL_LEFT_MARGIN * 2, self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN,
-                   constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA)
-        draw_label(str(self.agent.step), constants.GRIDWORLD.PANEL_LEFT_MARGIN * 2,
-                   self.height - constants.GRIDWORLD.PANEL_TOP_MARGIN * 2,
-                   constants.GRIDWORLD.PANEL_FONT_SIZE, constants.GRIDWORLD.BLACK_ALPHA)
-
-        # Draws the cells of the grid
-        for i in range(self.grid.num_rows):
-            for j in range(self.grid.num_cols):
-                self.grid.grid[i][j].draw(i, j, self.border_color)
-
-        # Draw agent
-        self.agent.draw()
 
     def on_key_press(self, symbol, modifiers):
         """
@@ -133,6 +161,8 @@ class GridFrame(pyglet.window.Window):
         :return: None
         """
         self.agent.update()
+        self.reward_label.text = str(self.agent.reward)
+        self.step_label.text = str(self.agent.step)
 
     def set_state(self, state):
         """
@@ -143,6 +173,13 @@ class GridFrame(pyglet.window.Window):
         """
         self.agent.set_state(state)
         self.agent.update()
+        self.reward_label.text = str(self.agent.reward)
+        self.step_label.text = str(self.agent.step)
 
     def reset(self):
+        """
+        Resets the agent state without closing the screen
+
+        :return: None
+        """
         self.agent.reset()

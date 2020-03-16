@@ -150,9 +150,9 @@ class QAgent:
 
 # Program entrypoint, runs the Q(0)-learning algorithm
 if __name__ == '__main__':
-    env = YagwEnv(height=10, width=10)
+    env = YagwEnv(height=8, width=8)
     q_agent = QAgent(env, gamma=0.99, alpha=0.2, epsilon=1, render=False, eval_sleep=0.35,
-                     min_epsilon=0.1, eval_epochs=2, log_frequency=100)
+                     min_epsilon=0.1, eval_epochs=2, log_frequency=100, epsilon_decay=0.999)
     episode_rewards, episode_steps, epsilon_values = q_agent.run(5000)
     state_values = list(map(lambda i: q_agent.Q[i].sum(), range(0, env.num_states)))
     q_agent.print_state_values(height=env.height, width=env.width)

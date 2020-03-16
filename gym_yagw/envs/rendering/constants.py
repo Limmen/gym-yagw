@@ -5,9 +5,10 @@ class GRIDWORLD:
     RECT_SIZE = 20
     BLACK = (0, 0, 0)
     BLACK_ALPHA = (0, 0, 0, 255)
+    WHITE_ALPHA = (255, 255, 255, 255)
     RED_ALPHA = (128, 0, 0, 255)
-    WHITE = (1,1,1)
-    GREY = (220/255, 220/255, 220/255)
+    WHITE = (255,255,255)
+    GREY = (220, 220, 220)
     RESOURCES_DIR = "resources"
     AVATAR_FILENAME = "man.png"
     PANEL_HEIGHT = 100

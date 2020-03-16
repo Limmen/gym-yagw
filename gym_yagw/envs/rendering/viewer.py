@@ -70,6 +70,7 @@ class Viewer():
                               avatar_filename=self.avatar_filename, resources_dir=self.resources_dir,
                               agent_start_x=self.agent_start_x, agent_start_y=self.agent_start_y,
                               agent_scale=self.agent_scale, caption=self.caption, manual=self.manual)
+        self.gridframe.on_close = self.window_closed_by_user
         self.isopen = True
         pyglet.clock.schedule_interval(self.gridframe.update, 1 / 60.)
         pyglet.app.run()
@@ -85,6 +86,7 @@ class Viewer():
                                    avatar_filename=self.avatar_filename, resources_dir=self.resources_dir,
                                    agent_start_x=self.agent_start_x, agent_start_y=self.agent_start_y,
                                    agent_scale=self.agent_scale, caption=self.caption, manual=self.manual)
+        self.gridframe.on_close = self.window_closed_by_user
         self.isopen = True
 
     def window_closed_by_user(self):
@@ -94,6 +96,7 @@ class Viewer():
         :return: None
         """
         self.isopen = False
+        self.gridframe.close()
 
     def close(self):
         """
@@ -101,7 +104,7 @@ class Viewer():
 
         :return: None
         """
-        self.window.close()
+        self.gridframe.close()
 
     def render(self, return_rgb_array = False):
         """

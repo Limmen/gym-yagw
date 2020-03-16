@@ -1,5 +1,5 @@
 from gym_yagw.envs.rendering import constants
-from gym_yagw.envs.rendering.render_util import draw_rect_border, draw_and_fill_rect, draw_label
+from gym_yagw.envs.rendering.render_util import batch_label, batch_rect_fill, batch_rect_border
 
 class GridCell:
     """
@@ -16,20 +16,23 @@ class GridCell:
         self.size = size
         self.goal_state = goal_state
 
-    def draw(self, y, x, color):
+    def draw(self, y, x, color, batch, group):
         """
         Draws itself, i.e, a cell-square in the grid
+
         :param x: the x coordinate of the lower-left  corner of the cell
         :param y: the y coordinate of the lower-left  corner of the cell
         :param lbl_color: the border color of the cell
+        :param batch: the batch to add this element to
+        :param group: the batch group to add this element to (e.g. foreground or background)
         :return: None
         """
-        draw_rect_border(x * self.size, y * self.size, self.size, self.size, color)
+        batch_rect_border(x * self.size, y * self.size, self.size, self.size, color, batch, group)
         lbl = str(constants.GRIDWORLD.NEGATIVE_REWARD)
         lbl_color = constants.GRIDWORLD.BLACK_ALPHA
         if self.goal_state:
             lbl = str(constants.GRIDWORLD.POSITIVE_REWARD)
-            draw_and_fill_rect(x * self.size, y * self.size, self.size, self.size, constants.GRIDWORLD.GREY)
+            batch_rect_fill(x * self.size, y * self.size, self.size, self.size, constants.GRIDWORLD.GREY, batch, group)
             lbl_color = constants.GRIDWORLD.RED_ALPHA
-        draw_label(lbl, x * self.size + self.size / 2, y * self.size + self.size / 2,
-                   constants.GRIDWORLD.REWARD_FONT_SIZE, lbl_color)
+        return batch_label(lbl, x * self.size + self.size / 2, y * self.size + self.size / 2,
+                           constants.GRIDWORLD.REWARD_FONT_SIZE, lbl_color, batch, group)
