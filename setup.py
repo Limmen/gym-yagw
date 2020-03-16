@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='gym_yagw',
-      version='0.0.1',
+      version='1.0.0',
       install_requires=['gym', 'pyglet', 'numpy'],
       author='Kim Hammar',
       author_email='hammar.kim@gmail.com',

@@ -110,7 +110,7 @@ class QAgent:
         :return:
         """
         print("State values:")
-        state_values = list(map(lambda i: q_agent.Q[i].sum(), range(0, self.env.num_states)))
+        state_values = list(map(lambda i: self.Q[i].sum(), range(0, self.env.num_states)))
         for j in range(height):
             str = ''
             for i in range(width):
@@ -154,6 +154,5 @@ if __name__ == '__main__':
     q_agent = QAgent(env, gamma=0.99, alpha=0.2, epsilon=1, render=False, eval_sleep=0.35,
                      min_epsilon=0.1, eval_epochs=2, log_frequency=100, epsilon_decay=0.999)
     episode_rewards, episode_steps, epsilon_values = q_agent.run(5000)
-    state_values = list(map(lambda i: q_agent.Q[i].sum(), range(0, env.num_states)))
     q_agent.print_state_values(height=env.height, width=env.width)
     q_agent.eval()
