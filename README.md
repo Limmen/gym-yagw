@@ -3,14 +3,17 @@
 This repository contains an RL environment based on the Gridworld from Sutton & Barto (1998).
 The environment can be used together with OpenAI gym.
 
-## MDP Model
-$width \in R, height \in mathbb{R}$
-$S = \{(x,y) | x \in [0, width), \land y \in [0, height)\}$
-$\mathcal{A} = \{0,1,2,3\}$
-$\mathcal{A}_{\text{labels}} = \{\text{Left}, \text{Right}, \text{Up}, \text{Down}\}$
-$\mathcal{R}_{ss^{\prime}}^{a} = +1 \text{ if } s^{\prime} = \text{ goal state else} -1$
-$\mathcal{P}_{ss^{\prime}}^a$ is deterministic, illegal operations (e.g moving into a wall) are 
-treated as no-ops and yield a negative reward.
+![](./resources/yagw.gif)
+
+Table of Contents
+=================
+  
+   * [Useful Commands](#Useful-Commands)
+   * [Requirements](#Requirements)
+   * [Usage](#Usage)
+   * [MDP Model](#MDP-Model)
+   * [Author & Maintainer](#Author-&-Maintainer)
+   * [Copyright and license](#copyright-and-license)
 
 ## Useful Commands
 
@@ -66,12 +69,23 @@ import gym
 from gym_yagw.algorithms.q_learning import QAgent
 
 env = gym.make("gym_yagw:yagw-v1", width=5, height=5)
-q_agent = QAgent(env, gamma=0.99, alpha=0.2, epsilon=1, render=False, eval_sleep=0.35,
-                     min_epsilon=0.1, eval_epochs=2, log_frequency=100, epsilon_decay=0.999)
+q_agent = QAgent(env, gamma=0.99, alpha=0.2, epsilon=1, render=False, eval_sleep=0.3,
+                     min_epsilon=0.1, eval_epochs=2, log_frequency=100, epsilon_decay=0.999, video=False,
+                     video_fps = 5, video_dir="./videos")
 episode_rewards, episode_steps, epsilon_values = q_agent.run(5000)
 q_agent.print_state_values(height=env.height, width=env.width)
 q_agent.eval()
 ```
+
+## MDP Model
+$width \in R, height \in mathbb{R}$
+$S = \{(x,y) | x \in [0, width), \land y \in [0, height)\}$
+$\mathcal{A} = \{0,1,2,3\}$
+$\mathcal{A}_{\text{labels}} = \{\text{Left}, \text{Right}, \text{Up}, \text{Down}\}$
+$\mathcal{R}_{ss^{\prime}}^{a} = +1 \text{ if } s^{\prime} = \text{ goal state else} -1$
+$\mathcal{P}_{ss^{\prime}}^a$ is deterministic, illegal operations (e.g moving into a wall) are 
+treated as no-ops and yield a negative reward.
+
 
 ## Author & Maintainer
 

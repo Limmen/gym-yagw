@@ -3,6 +3,7 @@ import numpy as np
 import random
 import time
 import tqdm
+from gym import wrappers
 
 class QAgent:
     """
@@ -10,7 +11,8 @@ class QAgent:
     Q-learning is a one-step off-policy algorithm
     """
     def __init__(self, env:YagwEnv, gamma=0.8, alpha=0.1, epsilon=0.9, render = False, eval_sleep = 0.35,
-                 epsilon_decay = 0.999, min_epsilon = 0.1, eval_epochs = 1, log_frequency = 100):
+                 epsilon_decay = 0.999, min_epsilon = 0.1, eval_epochs = 1, log_frequency = 100,
+                 video = False, video_fps=5, video_dir = None):
         """
         Initalize environment and hyperparameters
 
@@ -25,6 +27,8 @@ class QAgent:
         :param min_epsilon: minimum epsilon rate
         :param eval_epochs: number of evaluation epochs
         :param log_frequency: number of episodes between logs
+        :param video: boolean flag whether to record video of the evaluation.
+        :param video_dir: path where to save videos (will overwrite)
         """
         self.gamma = gamma
         self.env = env
@@ -37,6 +41,9 @@ class QAgent:
         self.min_epsilon = min_epsilon
         self.eval_epochs = eval_epochs
         self.log_frequency = log_frequency
+        self.video = video
+        self.video_fps = video_fps
+        self.video_dir = video_dir
 
 
     def get_action(self, s, eval=False):
@@ -125,11 +132,17 @@ class QAgent:
         :return: None
         """
         done = False
+        if self.video:
+            if self.video_dir is None:
+                raise AssertionError("Video is set to True but no video_dir is provided, please specify "
+                                     "the video_dir argument")
+            self.env = wrappers.Monitor(self.env, self.video_dir, force=True)
+            self.env.metadata["video.frames_per_second"] = self.video_fps
         s = self.env.reset()
         for epoch in range(self.eval_epochs):
             i = 0
             while not done:
-                self.env.render(mode="human")
+                self.env.render()
                 time.sleep(self.eval_sleep)
                 i = i+1
                 s_index = self.env.get_state_index(s)
@@ -151,8 +164,9 @@ class QAgent:
 # Program entrypoint, runs the Q(0)-learning algorithm
 if __name__ == '__main__':
     env = YagwEnv(height=8, width=8)
-    q_agent = QAgent(env, gamma=0.99, alpha=0.2, epsilon=1, render=False, eval_sleep=0.35,
-                     min_epsilon=0.1, eval_epochs=2, log_frequency=100, epsilon_decay=0.999)
+    q_agent = QAgent(env, gamma=0.99, alpha=0.2, epsilon=1, render=False, eval_sleep=0.3,
+                     min_epsilon=0.1, eval_epochs=2, log_frequency=100, epsilon_decay=0.999, video=True,
+                     video_fps = 5, video_dir="./videos")
     episode_rewards, episode_steps, epsilon_values = q_agent.run(5000)
     q_agent.print_state_values(height=env.height, width=env.width)
     q_agent.eval()

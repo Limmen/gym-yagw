@@ -63,7 +63,7 @@ class YagwEnv(gym.Env):
         self.rect_size = 50
         self.metadata = {
         'render.modes': ['human', 'rgb_array'],
-        'video.frames_per_second' : 50
+        'video.frames_per_second' : 50 # Video rendering speed
         }
         self.reward_range = (-float('inf'), float(1))
 
@@ -107,6 +107,8 @@ class YagwEnv(gym.Env):
                                 "You should always call 'reset()' once you receive 'done = True' -- "
                                 "any further steps are undefined behavior.")
                 self.steps_beyond_done +=1
+        if self.viewer is not None:
+            self.viewer.gridframe.set_state(self.__get_state())
         return state, reward, done, {}
 
 
@@ -142,7 +144,6 @@ class YagwEnv(gym.Env):
             raise NotImplemented("mode: {} is not supported".format(mode))
         if self.viewer is None:
             self.__setup_viewer()
-        self.viewer.gridframe.set_state(self.__get_state())
         return self.viewer.render(return_rgb_array = mode=='rgb_array')
 
     def __setup_viewer(self):

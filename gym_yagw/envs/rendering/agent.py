@@ -1,5 +1,5 @@
 import pyglet
-import os
+import numpy as np
 
 class Agent(pyglet.sprite.Sprite):
     """
@@ -140,7 +140,9 @@ class Agent(pyglet.sprite.Sprite):
         :param state: the state
         :return: None
         """
+        old_col, old_row = self.col,self.row
         self.col = state[0]
         self.row = self.max_row - state[1]  # state[1] is inverted so subtract it so that it makes sense visually.
-        self.__update_step()
-        self.__update_reward()
+        if self.col != old_col or self.row != old_row:
+            self.__update_step()
+            self.__update_reward()
