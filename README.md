@@ -52,7 +52,7 @@ import gym
 : Box(2,)
 > env.metadata
 : "{'render.modes': ['human', 'rgb_array'], 'video.frames_per_second': 50}
-obs = env.reset()
+> obs = env.reset()
 > obs
 : array([0, 0])
 > s_prime, reward, done, info = env.step(1) # Move right
@@ -88,6 +88,15 @@ $\mathcal{R}_{ss^{\prime}}^{a} = +1 \text{ if } s^{\prime} = \text{ goal state e
 $\mathcal{P}_{ss^{\prime}}^a$ is deterministic, illegal operations (e.g moving into a wall) are 
 treated as no-ops and yield a negative reward.
 
+## Manual game
+
+You can run the environment in a mode of "manual control" as well:
+
+```python
+from gym_yagw.envs.rendering.viewer import Viewer
+viewer = Viewer(width=300, height=400, rect_size=50, manual=True)
+viewer.manual_start()
+``` 
 
 ## Author & Maintainer
 

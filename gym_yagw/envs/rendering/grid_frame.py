@@ -3,6 +3,7 @@ from gym_yagw.envs.rendering.grid import Grid
 from gym_yagw.envs.rendering.agent import Agent
 from gym_yagw.envs.rendering import constants
 from gym_yagw.envs.rendering.render_util import batch_label, batch_rect_fill
+import os
 
 class GridFrame(pyglet.window.Window):
     """
@@ -111,8 +112,12 @@ class GridFrame(pyglet.window.Window):
 
         :return: None
         """
-        # TODO check if path exists first
-        pyglet.resource.path = [self.resources_dir]
+        if os.path.exists(self.resources_dir):
+            pyglet.resource.path = [self.resources_dir]
+        else:
+            script_dir = os.path.dirname(__file__)
+            resource_path = os.path.join(script_dir, './', constants.GRIDWORLD.RESOURCES_DIR)
+            pyglet.resource.path = [resource_path]
         pyglet.resource.reindex()
 
     def on_draw(self):

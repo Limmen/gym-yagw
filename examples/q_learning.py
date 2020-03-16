@@ -1,3 +1,6 @@
+"""
+Tabular Q-learning for the YAGW environment
+"""
 import gym
 from gym_yagw.algorithms.q_learning import QAgent
 
