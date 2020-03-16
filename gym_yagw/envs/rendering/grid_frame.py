@@ -111,6 +111,7 @@ class GridFrame(pyglet.window.Window):
 
         :return: None
         """
+        # TODO check if path exists first
         pyglet.resource.path = [self.resources_dir]
         pyglet.resource.reindex()
 

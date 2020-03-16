@@ -3,7 +3,9 @@
 This repository contains an RL environment based on the Gridworld from Sutton & Barto (1998).
 The environment can be used together with OpenAI gym.
 
-![](./resources/yagw.gif)
+<p align="center"> 
+<img src="./resources/yagw.gif">
+</p>
 
 Table of Contents
 =================
