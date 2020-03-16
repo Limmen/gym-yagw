@@ -131,6 +131,8 @@ class QAgent:
 
         :return: None
         """
+        if(self.eval_epochs < 1):
+            return
         done = False
         if self.video:
             if self.video_dir is None:

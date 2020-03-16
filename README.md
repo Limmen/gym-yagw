@@ -7,6 +7,14 @@ The environment can be used together with OpenAI gym.
 <img src="./resources/yagw.gif">
 </p>
 
+<p align="center"> 
+<img src="./resources/episode_lengths.png">
+</p>
+
+<p align="center"> 
+<img src="./resources/episode_returns.png">
+</p>
+
 Table of Contents
 =================
   
@@ -97,6 +105,11 @@ from gym_yagw.envs.rendering.viewer import Viewer
 viewer = Viewer(width=300, height=400, rect_size=50, manual=True)
 viewer.manual_start()
 ``` 
+
+## Future Work
+
+- Debug UI to inspect policy/state-values
+- Unit tests
 
 ## Author & Maintainer
 
