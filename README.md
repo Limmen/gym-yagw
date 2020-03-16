@@ -3,21 +3,21 @@
 This repository contains an RL environment based on the Gridworld from Sutton & Barto (1998).
 The environment can be used together with OpenAI gym.
 
-<p align="center"> 
+<p align="center">
 <img src="./resources/yagw.gif">
 </p>
 
-<p align="center"> 
+<p align="center">
 <img src="./resources/episode_lengths.png">
 </p>
 
-<p align="center"> 
+<p align="center">
 <img src="./resources/episode_returns.png">
 </p>
 
 Table of Contents
 =================
-  
+
    * [Useful Commands](#Useful-Commands)
    * [Requirements](#Requirements)
    * [Usage](#Usage)
@@ -28,6 +28,8 @@ Table of Contents
 ## Useful Commands
 
 ```bash
+# install from pip
+pip install gym-yagw==1.0.0
 # local install from source
 $ pip install -e gym-yagw
 # force upgrade deps
@@ -47,7 +49,7 @@ pip3 install -e .
 - GPU for 3D graphics acceleration (optional)
 
 ## Usage
-The environment can be accessed like any other OpenAI environment with `gym.make`. 
+The environment can be accessed like any other OpenAI environment with `gym.make`.
 Once the environment has been created, the API functions
 `step()`, `reset()`, `render()`, and `close()` can be used to train any RL algorithm of
 your preference.
@@ -93,7 +95,7 @@ $S = \{(x,y) | x \in [0, width), \land y \in [0, height)\}$
 $\mathcal{A} = \{0,1,2,3\}$
 $\mathcal{A}_{\text{labels}} = \{\text{Left}, \text{Right}, \text{Up}, \text{Down}\}$
 $\mathcal{R}_{ss^{\prime}}^{a} = +1 \text{ if } s^{\prime} = \text{ goal state else} -1$
-$\mathcal{P}_{ss^{\prime}}^a$ is deterministic, illegal operations (e.g moving into a wall) are 
+$\mathcal{P}_{ss^{\prime}}^a$ is deterministic, illegal operations (e.g moving into a wall) are
 treated as no-ops and yield a negative reward.
 
 ## Manual game
@@ -104,7 +106,7 @@ You can run the environment in a mode of "manual control" as well:
 from gym_yagw.envs.rendering.viewer import Viewer
 viewer = Viewer(width=300, height=400, rect_size=50, manual=True)
 viewer.manual_start()
-``` 
+```
 
 ## Future Work
 
